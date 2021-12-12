@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,11 +14,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
+
+@Composable
+fun personTopBar() {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Private Relations",
+                style = MaterialTheme.typography.h6,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(4.dp),
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_share_24),
+                    contentDescription = "arrow back"
+                )
+            }
+        }
+    )
+}
 
 @Composable
 fun personListView(
@@ -26,7 +51,12 @@ fun personListView(
     deletePerson: (Person) -> Unit
 ) {
     Scaffold(
-        topBar = { topBar(title = "Private Relations") }
+        topBar = { personTopBar() },
+        floatingActionButton = {
+            actionButton(text = "+ Person") {
+                navController.navigate(Routes.ADD_PERSON)
+            }
+        }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -38,17 +68,8 @@ fun personListView(
                     )
                 }
             }
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-                    .size(80.dp),
-                onClick = { navController.navigate(Routes.ADD_PERSON) }) {
-                Text(text = "+", style = MaterialTheme.typography.h4)
-            }
         }
     }
-
 }
 
 @Composable
@@ -59,8 +80,10 @@ fun personView(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Surface(
-        color = MaterialTheme.colors.primary,
+    Card(
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RoundedCornerShape(8.dp),
+        elevation = 4.dp,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Box(modifier = Modifier
@@ -75,7 +98,7 @@ fun personView(
             Text(
                 text = person.firstName,
                 style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(24.dp)
+                modifier = Modifier.padding(16.dp)
             )
         }
         DropdownMenu(expanded = expanded,
@@ -101,7 +124,11 @@ fun addPersonView(
     var birthDate by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { topBar(title = "Add Person") }
+        topBar = {
+            topBar(
+                title = "Add Person",
+                onBackClick = { navController.navigate(Routes.PERSONS) })
+        }
     ) {
         Column {
 
@@ -137,8 +164,7 @@ fun addPersonView(
                         showDatePicker(activity = activity) {
                             it?.let {
                                 val date = Date(it)
-                                val format = SimpleDateFormat("dd.MM.yyyy")
-                                birthDate = format.format(date)
+                                birthDate = dateFormat.format(date)
                             }
                         }
                     }

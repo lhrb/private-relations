@@ -3,6 +3,7 @@ package com.github.lhrb.prvrel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,21 +28,22 @@ fun itemListView(
     navController: NavController
 ) {
     Scaffold(
-        topBar = { topBar(title = "Notes") }
+        topBar = {
+            topBar(
+                title = "Notes",
+                onBackClick = { navController.navigate(Routes.PERSONS) })
+        },
+        floatingActionButton = {
+            actionButton(text = "+ Note") {
+                navController.navigate(Routes.ADD_ITEM + "/" + personId)
+            }
+        }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
                 items(items = items.value) { item ->
                     itemView(item = item)
                 }
-            }
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-                    .size(80.dp),
-                onClick = { navController.navigate(Routes.ADD_ITEM + "/" + personId) }) {
-                Text(text = "+", style = MaterialTheme.typography.h4)
             }
         }
     }
@@ -51,8 +53,9 @@ fun itemListView(
 fun itemView(
     item: Item
 ) {
-    Surface(
-        color = MaterialTheme.colors.primary,
+    Card(
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Box(
@@ -63,7 +66,7 @@ fun itemView(
             Text(
                 text = item.content,
                 style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(24.dp)
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
@@ -77,7 +80,12 @@ fun addItemView(
 ) {
     var content by remember { mutableStateOf("") }
     Scaffold(
-        topBar = { topBar(title = "Add Item") }
+        topBar = {
+            topBar(
+                title = "Add Item",
+                onBackClick = { navController.navigate(Routes.ITEMS + "/" + personId) }
+            )
+        }
     ) {
         Column {
             OutlinedTextField(

@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -80,15 +82,49 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+
 @Composable
-fun topBar(title: String) {
-    TopAppBar(title = {
+fun actionButton(text: String, onClick: () -> Unit) {
+    FloatingActionButton(
+        modifier = Modifier
+            .padding(24.dp),
+        onClick = onClick
+    ) {
         Text(
-            text = title,
-            style = MaterialTheme.typography.h4,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(4.dp)
+            text = text,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(16.dp)
         )
-    })
+    }
+}
+
+@Composable
+fun topBar(title: String, onBackClick: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h6,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(4.dp),
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                    contentDescription = "arrow back"
+                )
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun preview() {
+    Scaffold(
+        topBar = { topBar(title = "Private Relations", onBackClick = {}) }
+    ) {}
 }
 
